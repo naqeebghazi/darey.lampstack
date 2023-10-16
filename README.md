@@ -46,7 +46,7 @@ $ exit
 Then in linux, start the interactive script:
 $ sudo mysql_secure_installation
 
-[Image](https://github.com/naqeebghazi/darey.lampstack/blob/main/images/MySQLserverinstallation.png?raw=true)
+![Image](https://github.com/naqeebghazi/darey.lampstack/blob/main/images/MySQLserverinstallation.png?raw=true)
 
 There is a password for logging into MySQL and a passowrd as a root user within MySQL. The prompts that follow are for both of these:
 
@@ -123,7 +123,7 @@ Paste in the following bare-bones configuration by hitting on i on the keyboard 
     CustomLog ${APACHE_LOG_DIR}/access.log combined
 </VirtualHost>
 
-[Image](https://github.com/naqeebghazi/darey.lampstack/blob/main/images/apache2sitesavailableconf.png?raw=true)
+![Image](https://github.com/naqeebghazi/darey.lampstack/blob/main/images/apache2sitesavailableconf.png?raw=true)
 
 With this VirtualHost configuration, we’re telling Apache to serve projectlamp using /var/www/projectlampl as its web root directory. If you would like to test Apache without a domain name, you can remove or comment out the options ServerName and ServerAlias by adding a # character in the beginning of each option’s lines. Adding the # character there will tell the program to skip processing the instructions on those lines.
 
