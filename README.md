@@ -17,6 +17,6 @@ $ sudo apt install apache2
 
 ### Test that apache is running:
 
-$sudo systemsctl status apache2
+$ sudo systemsctl status apache2
 
 
