@@ -125,7 +125,9 @@ Paste in the following bare-bones configuration by hitting on i on the keyboard 
 
 ![Image](https://github.com/naqeebghazi/darey.lampstack/blob/main/images/apache2sitesavailableconf.png?raw=true)
 
-With this VirtualHost configuration, we’re telling Apache to serve projectlamp using /var/www/projectlampl as its web root directory. If you would like to test Apache without a domain name, you can remove or comment out the options ServerName and ServerAlias by adding a # character in the beginning of each option’s lines. Adding the # character there will tell the program to skip processing the instructions on those lines.
+With this VirtualHost configuration, we’re telling Apache to serve projectlamp using /var/www/projectlampl as its web root directory. 
+
+### Enable the Virtual host
 
 You can now use a2ensite command to enable the new virtual host:
 
@@ -143,9 +145,11 @@ Finally, reload Apache so these changes take effect:
 
 $ sudo systemctl reload apache2
 
-Your new website is now active, but the web root /var/www/projectlamp is still empty. Create an index.html file in that location so that we can test that the virtual host works as expected:
+Your new website is now active, but the web root /var/www/projectlamp is still empty. Create an index.html file in that location so that we can test that the virtual host works as expected
 
 $ sudo echo 'Hello LAMP from hostname' $(curl -s http://169.254.169.254/latest/meta-data/public-hostname) 'with public IP' $(curl -s http://169.254.169.254/latest/meta-data/public-ipv4) > /var/www/projectlamp/index.html
+
+Alternatively, paste the following into a new index.php file in the /var/www/projectlamp/ directory.
 
 Now go to your browser and try to open your website URL using IP address:
 
