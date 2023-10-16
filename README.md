@@ -12,4 +12,6 @@ This stack forms the foundation of one of the most common platforms for developi
 
 ### Install Apache
 
-/c 'sudo apt update'
+'''
+sudo apt update
+'''
