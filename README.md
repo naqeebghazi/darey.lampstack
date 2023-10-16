@@ -51,6 +51,8 @@ There is a password for logging into MySQL and a passowrd as a root user within 
 Once complete, log back into MySQL:
 $ sudo mysql -p
 
+![Image](https://github.com/naqeebghazi/darey.lampstack/blob/main/images/MySQLloginMessage.png?raw=true)
+
 -p flag will prompt the user for the password used after changing the root user password
 
 Notice that you need to provide a password to connect as the root user.
