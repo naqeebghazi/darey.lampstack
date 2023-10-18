@@ -176,6 +176,28 @@ You can leave this file in place as a temporary landing page for your applicatio
 
 Your LEMP stack is now fully configured. In the next step, we’ll create a PHP script to test that Nginx is in fact able to handle .php files within your newly configured website.
 
+## Testing PHP with Nginx
+
+LEMP stack is now fully set up. 
+
+To test/validate that nginx can corrcetly handle .php files do this:
+
+- Use vim to create a info.php file in the /var/www/projectLEMP/ directory.
+- Paste into the info.php file:
+    <?php
+    phpinfo();
+
+- Access this php file in your web browser:
+    http://`server_domain_or_IP`/info.php
+
+You will see this page with detailed information about your server, thus demonstrating a successful test:
+
+![phpPagebrowser](https://github.com/naqeebghazi/darey.LEMPstack/blob/main/images/phpPagenginx.png?raw=true)
+
+Once confirmed, delete the info.php file as keeping it poses a security risk due to the server information it has on it. Use this command:
+
+$ sudo rm /var/www/your_domain/info.php
+
 
 ### Enable the Virtual host
 
