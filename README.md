@@ -136,19 +136,24 @@ Activate your configuration by linking to the config file from Nginx’s sites-e
 sudo ln -s /etc/nginx/sites-available/projectLEMP /etc/nginx/sites-enabled/
 This will tell Nginx to use the configuration next time it is reloaded. You can test your configuration for syntax errors by typing:
 
-sudo nginx -t
+$ sudo nginx -t
 You shall see following message:
 
-nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
-nginx: configuration file /etc/nginx/nginx.conf test is successful
+    nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+    nginx: configuration file /etc/nginx/nginx.conf test is successful
+
 If any errors are reported, go back to your configuration file to review its contents before continuing.
 
-We also need to disable default Nginx host that is currently configured to listen on port 80, for this run:
+We also need to disable default Nginx host that is currently configured to listen on port 80, for this run the following. This may not be necessary if the default file is not present. 
 
-sudo unlink /etc/nginx/sites-enabled/default
+$ sudo unlink /etc/nginx/sites-enabled/default
+
 When you are ready, reload Nginx to apply the changes:
 
-sudo systemctl reload nginx
+$ sudo systemctl reload nginx
+
+![nginxcomplete](https://github.com/naqeebghazi/darey.LEMPstack/blob/main/images/nginxcomplete.png?raw=true)
+
 Your new website is now active, but the web root /var/www/projectLEMP is still empty. Create an index.html file in that location so that we can test that your new server block works as expected:
 
 sudo echo 'Hello LEMP from hostname' $(curl -s http://169.254.169.254/latest/meta-data/public-hostname) 'with public IP' $(curl -s http://169.254.169.254/latest/meta-data/public-ipv4) > /var/www/projectLEMP/index.html
