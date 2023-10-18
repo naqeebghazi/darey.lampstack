@@ -75,7 +75,7 @@ To install these 2 packages at once, run:
 $ sudo apt install php-fpm php-mysql
 When prompted, type Y and press ENTER to confirm installation.
 
-You now have your PHP components installed. Next, you will configure Nginx to use them.
+You now have your PHP components installed.
 
 ## Configure nginx to use PHP
 
