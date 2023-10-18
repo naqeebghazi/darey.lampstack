@@ -66,66 +66,100 @@ Your MySQL server is now installed and secured. Next, we will install PHP, the f
 
 ## Install PHP
 
-You'll need the following components when installing PHP:
-- PHP 
-- PHP-MySQL: allows phph to communicate with mysql databases
-- LibApache2-mod-PHP: enables apache to handle phph files
+You have Nginx installed to serve your content and MySQL installed to store and manage your data. Now you can install PHP to process code and generate dynamic content for the web server.
 
-To install all 3 packages at once:
-$ sudo apt install php libapache2-mod-php php-mysql
+While Apache embeds the PHP interpreter in each request, Nginx requires an external program to handle PHP processing and act as a bridge between the PHP interpreter itself and the web server. This allows for a better overall performance in most PHP-based websites, but it requires additional configuration. You’ll need to install php-fpm, which stands for “PHP fastCGI process manager”, and tell Nginx to pass PHP requests to this software for processing. Additionally, you’ll need php-mysql, a PHP module that allows PHP to communicate with MySQL-based databases. Core PHP packages will automatically be installed as dependencies.
 
-Check php version:
-$ php -v
+To install these 2 packages at once, run:
 
-This finalises the LAMP stack installation
+$ sudo apt install php-fpm php-mysql
+When prompted, type Y and press ENTER to confirm installation.
 
-## Enable PHP on the website
+You now have your PHP components installed. Next, you will configure Nginx to use them.
 
-We now need to set up two virtual hosts within pur EC2 instance vm.
+## Configure nginx to use PHP
 
-With the default DirectoryIndex settings on Apache, a file named index.html will always take precedence over an index.php file.
-This is useful for setting up maintenance pages in PHP applications, by creating a temporary index.html file containing an informative message to visitors. Because this page will take precedence over the index.php page, it will then become the landing page for the application. Once maintenance is over, the index.html is renamed or removed from the document root, bringing back the regular application page.
-In case you want to change this behavior, you'll need to edit the /etc/apache2/mods-enabled/dir.conf file and change the order in which the index.php file is listed within the DirectoryIndex directive:
+Create the root web directory for your_domain as follows:
 
-$ sudo vim /etc/apache2/mods-enabled/dir.conf
+$ sudo mkdir /var/www/projectLEMP
 
-Then in the vim editor, ensure this is whats written (i.e. index.php is prioritised):
-<IfModule mod_dir.c>
-       DirectoryIndex index.php index.html index.cgi index.pl index.xhtml index.htm
-</IfModule>
+Assign ownership of the directory with the $USER environment variable, which will reference your current system user:
 
-Then, reload Apache:
-$ sudo systemctl reload apache2
+$ sudo chown -R $USER:$USER /var/www/projectLEMP
 
-Optional:
-_ Create a PHP script to test PHP is installed and configured on the server. 
+Open a new configuration file in Nginx’s sites-available directory using your preferred command-line editor. Here, we’ll use nano:
 
-$ sudo mkdir /var/www/projectlamp/index.php _
+$ sudo nano /etc/nginx/sites-available/projectLEMP
 
-Next, assign ownership of the directory with your current system user:
-$ sudo chown -R $USER:$USER /var/www/projectlamp
+Paste this into the new file:
 
-Apache on Ubuntu 20.04 has one server block enabled by default that is configured to serve documents from the /var/www/html directory.
-We will leave this configuration as is and will add our own directory next next to the default one.
+#/etc/nginx/sites-available/projectLEMP
 
-Then, create and open a new configuration file in Apache’s sites-available directory using your preferred command-line editor. Here, we’ll be using vi or vim (They are the same by the way):
+server {
+    listen 80;
+    server_name projectLEMP www.projectLEMP;
+    root /var/www/projectLEMP;
 
-$ sudo vim /etc/apache2/sites-available/projectlamp.conf
+    index index.html index.htm index.php;
 
-Paste in the following bare-bones configuration by hitting on i on the keyboard to enter the insert mode, and paste the text:
+    location / {
+        try_files $uri $uri/ =404;
+    }
 
-<VirtualHost *:80>
-    ServerName projectlamp
-    ServerAlias www.projectlamp 
-    ServerAdmin webmaster@localhost
-    DocumentRoot /var/www/projectlamp
-    ErrorLog ${APACHE_LOG_DIR}/error.log
-    CustomLog ${APACHE_LOG_DIR}/access.log combined
-</VirtualHost>
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/var/run/php/php7.4-fpm.sock;
+     }
 
-![Image](https://github.com/naqeebghazi/darey.lampstack/blob/main/images/apache2sitesavailableconf.png?raw=true)
+    location ~ /\.ht {
+        deny all;
+    }
 
-With this VirtualHost configuration, we’re telling Apache to serve projectlamp using /var/www/projectlampl as its web root directory. 
+}
+
+Here’s what each of these directives and location blocks do:
+
+listen — Defines what port Nginx will listen on. In this case, it will listen on port 80, the default port for HTTP.
+root — Defines the document root where the files served by this website are stored.
+index— Defines in which order Nginx will prioritize index files for this website. It is a common practice to list index.html files with a higher precedence than index.php files to allow for quickly setting up a maintenance landing page in PHP applications. You can adjust these settings to better suit your application needs.
+server_name — Defines which domain names and/or IP addresses this server block should respond for. Point this directive to your server’s domain name or public IP address.
+location / — The first location block includes a try_files directive, which checks for the existence of files or directories matching a URI request. If Nginx cannot find the appropriate resource, it will return a 404 error.
+location ~ \.php$ — This location block handles the actual PHP processing by pointing Nginx to the fastcgi-php.conf configuration file and the php7.4-fpm.sock file, which declares what socket is associated with php-fpm.
+location ~ /\.ht— The last location block deals with .htaccess files, which Nginx does not process. By adding the deny all directive, if any .htaccess files happen to find their way into the document root ,they will not be served to visitors.
+When you’re done editing, save and close the file. If you’re using nano, you can do so by typing CTRL+X and then y and ENTER to confirm.
+
+Activate your configuration by linking to the config file from Nginx’s sites-enabled directory:
+
+sudo ln -s /etc/nginx/sites-available/projectLEMP /etc/nginx/sites-enabled/
+This will tell Nginx to use the configuration next time it is reloaded. You can test your configuration for syntax errors by typing:
+
+sudo nginx -t
+You shall see following message:
+
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+If any errors are reported, go back to your configuration file to review its contents before continuing.
+
+We also need to disable default Nginx host that is currently configured to listen on port 80, for this run:
+
+sudo unlink /etc/nginx/sites-enabled/default
+When you are ready, reload Nginx to apply the changes:
+
+sudo systemctl reload nginx
+Your new website is now active, but the web root /var/www/projectLEMP is still empty. Create an index.html file in that location so that we can test that your new server block works as expected:
+
+sudo echo 'Hello LEMP from hostname' $(curl -s http://169.254.169.254/latest/meta-data/public-hostname) 'with public IP' $(curl -s http://169.254.169.254/latest/meta-data/public-ipv4) > /var/www/projectLEMP/index.html
+Now go to your browser and try to open your website URL using IP address:
+
+http://<Public-IP-Address>:80
+If you see the text from ‘echo’ command you wrote to index.html file, then it means your Nginx site is working as expected.
+In the output you will see your server’s public hostname (DNS name) and public IP address. You can also access your website in your browser by public DNS name, not only by IP – try it out, the result must be the same (port is optional)
+
+http://<Public-DNS-Name>:80
+You can leave this file in place as a temporary landing page for your application until you set up an index.php file to replace it. Once you do that, remember to remove or rename the index.html file from your document root, as it would take precedence over an index.php file by default.
+
+Your LEMP stack is now fully configured. In the next step, we’ll create a PHP script to test that Nginx is in fact able to handle .php files within your newly configured website.
+
 
 ### Enable the Virtual host
 
