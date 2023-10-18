@@ -117,6 +117,9 @@ server {
 
 }
 
+![etcnginx_serverCode](https://github.com/naqeebghazi/darey.LEMPstack/blob/main/images/etcnginx_serverCode.png?raw=true)
+
+
 Here’s what each of these directives and location blocks do:
 
 listen — Defines what port Nginx will listen on. In this case, it will listen on port 80, the default port for HTTP.
