@@ -1,4 +1,4 @@
-# darey.lampstack
+# LAMP Stack Project
 
 ## Installing the LAMP tech stack
 
